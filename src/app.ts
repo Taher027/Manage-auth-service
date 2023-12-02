@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }))
 //   res.send('Hello World   !')
 // })
 
-app.get('/', (req: any, res: Response) => {
+app.get('/', (req: Request, res: Response) => {
   res.send('Hello World   !')
 })
 
