@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 // router
 app.use('/api/v1/user', userRouter);
 
-app.get('/', (req: Request, res: any) => {
+app.get('/', (req: Request, res: Response) => {
   res.send('Hello World   !');
 });
 
