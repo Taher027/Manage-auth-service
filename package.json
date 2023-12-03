@@ -22,7 +22,7 @@
     "winston-daily-rotate-file": "^4.7.1"
   },
   "lint-staged": {
-    "src/**/*.ts": "npm run lint-prettier"
+    "src/**/*.ts": "npx lint-prettier"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
