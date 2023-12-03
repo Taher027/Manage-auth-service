@@ -5,10 +5,11 @@
   "main": "src/server.ts",
   "scripts": {
     "start": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "lint": "eslint --ignore-path .eslintignore --ext .js,.ts",
-    "lint-fix": "eslint --fix",
+    "lint:check": "eslint --ignore-path .eslintignore --ext .js,.ts .",
+    "lint:fix": "eslint . --fix",
     "prettier:check": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
-    "lint-prettier": "npm run lint && npm run prettier:check",
+    "prettier:fix": "prettier --write .",
+    "lint-prettier": "npm run lint:check && npm run prettier:check",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Taher",
@@ -22,7 +23,7 @@
     "winston-daily-rotate-file": "^4.7.1"
   },
   "lint-staged": {
-    "src/**/*.ts": "npx lint-prettier"
+    "src/**/*.ts": "npm run lint-prettier"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
