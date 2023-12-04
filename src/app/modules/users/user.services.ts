@@ -1,12 +1,12 @@
-import { User } from './users.model';
-import { IUser } from './users.interface';
+import { User } from './user.model';
+import { IUser } from './user.interface';
 import config from '../../../config';
 import { generatedUserId } from './user.utils';
-export const getUser = async (): Promise<IUser[]> => {
+const getUser = async (): Promise<IUser[]> => {
   const user = await User.find({});
   return user;
 };
-export const createUser = async (user: IUser): Promise<IUser | null> => {
+const createUser = async (user: IUser): Promise<IUser | null> => {
   const id = await generatedUserId();
 
   user.id = id;
@@ -20,4 +20,9 @@ export const createUser = async (user: IUser): Promise<IUser | null> => {
     throw new Error('Failed to create User');
   }
   return createdUser;
+};
+
+export const userService = {
+  createUser,
+  getUser,
 };

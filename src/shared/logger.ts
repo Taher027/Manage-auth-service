@@ -1,8 +1,10 @@
-import { createLogger, format, transports } from 'winston';
-const { combine, timestamp, label, printf } = format;
-import DailyRotateFile from 'winston-daily-rotate-file';
-
+/* eslint-disable no-undef */
 import path from 'path';
+import { createLogger, format, transports } from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
+const { combine, timestamp, label, printf } = format;
+
+//Customm Log Format
 
 const myFormat = printf(({ level, message, label, timestamp }) => {
   const date = new Date(timestamp);
@@ -12,9 +14,9 @@ const myFormat = printf(({ level, message, label, timestamp }) => {
   return `${date.toDateString()} ${hour}:${minutes}:${seconds}  [${label}] ${level}: ${message}`;
 });
 
-export const logger = createLogger({
+const logger = createLogger({
   level: 'info',
-  format: combine(label({ label: 'UM' }), timestamp(), myFormat),
+  format: combine(label({ label: 'PH' }), timestamp(), myFormat),
   transports: [
     new transports.Console(),
     new DailyRotateFile({
@@ -22,7 +24,7 @@ export const logger = createLogger({
         process.cwd(),
         'logs',
         'winston',
-        'successes',
+        'success',
         'phu-%DATE%-success.log',
       ),
       datePattern: 'YYYY-DD-MM-HH',
@@ -32,9 +34,10 @@ export const logger = createLogger({
     }),
   ],
 });
-export const errorLogger = createLogger({
+
+const errorlogger = createLogger({
   level: 'error',
-  format: combine(label({ label: 'UM' }), timestamp(), myFormat),
+  format: combine(label({ label: 'PH' }), timestamp(), myFormat),
   transports: [
     new transports.Console(),
     new DailyRotateFile({
@@ -52,3 +55,5 @@ export const errorLogger = createLogger({
     }),
   ],
 });
+
+export { logger, errorlogger };

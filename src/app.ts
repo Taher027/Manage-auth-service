@@ -1,6 +1,7 @@
-import express, { Application, Request, Response } from 'express';
+import express, { Application } from 'express';
 import cors from 'cors';
-import userRouter from './app/modules/users/users.routes';
+import globalErrorHandler from './app/middlewares/globalErrorHandler';
+import routes from './app/routes';
 const app: Application = express();
 
 //middle ware
@@ -11,10 +12,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // router
-app.use('/api/v1/user', userRouter);
+app.use('/api/v1', routes);
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World   !');
-});
+//global error handler
+app.use(globalErrorHandler);
 
+//testing
+// app.get('/', async (req, res, next) => {
+//   throw new Error('testing Error Loger');
+// });
 export default app;

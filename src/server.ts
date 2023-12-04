@@ -1,20 +1,45 @@
+import { Server } from 'http';
 import mongoose from 'mongoose';
 import app from './app';
 import config from './config/index';
-import { errorLogger, logger } from './shared/logger';
+import { errorlogger, logger } from './shared/logger';
 
-async function dbConnected() {
+process.on('uncaughtException', error => {
+  errorlogger.error(error);
+  process.exit(1);
+});
+
+let server: Server;
+
+async function bootstrap() {
   try {
     await mongoose.connect(config.database_url as string);
-    logger.info('Database Connected Successfull');
-    app.listen(config.port, () => {
-      logger.info(`Application listening on port  ${config.port}`);
+    logger.info(`🛢   Database is connected successfully`);
+
+    server = app.listen(config.port, () => {
+      logger.info(`Application  listening on port ${config.port}`);
     });
   } catch (err) {
-    errorLogger.error('database connected failed!', err);
+    errorlogger.error('Failed  to connect database', err);
   }
 
-  // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
+  process.on('unhandledRejection', error => {
+    if (server) {
+      server.close(() => {
+        errorlogger.error(error);
+        process.exit(1);
+      });
+    } else {
+      process.exit(1);
+    }
+  });
 }
 
-dbConnected();
+bootstrap();
+
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM is received');
+  if (server) {
+    server.close();
+  }
+});
