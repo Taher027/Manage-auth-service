@@ -1,8 +1,18 @@
 import httpStatus from 'http-status';
-import { IAcademicSemester } from './academicSemester.interface';
+import {
+  IAcademicSemester,
+  IAcademicSemesterFilters,
+} from './academicSemester.interface';
 import { AcademicSemester } from './academicSemester.model';
-import { academicSemesterTitleCodeMapper } from './academicSemesterConstance';
+import {
+  academicSemesterSearchableFields,
+  academicSemesterTitleCodeMapper,
+} from './academicSemesterConstance';
 import ApiError from '../../../errors/ApiError';
+import { IPaginationOptions } from '../../interface/pagination';
+import { IGenericResponse } from '../../interface/common';
+import { paginationHelpers } from '../../../helpers/paginationHelpers';
+import { SortOrder } from 'mongoose';
 
 const createSemester = async (
   payload: IAcademicSemester,
@@ -14,7 +24,58 @@ const createSemester = async (
   const result = await AcademicSemester.create(payload);
   return result;
 };
+const getAllsemester = async (
+  filters: IAcademicSemesterFilters,
+  paginations: IPaginationOptions,
+): Promise<IGenericResponse<IAcademicSemester[]>> => {
+  const { searchTerm, ...filtersData } = filters;
 
+  const andConditions = [];
+  if (searchTerm) {
+    andConditions.push({
+      $or: academicSemesterSearchableFields.map(field => ({
+        [field]: {
+          $regex: searchTerm,
+          $options: 'i',
+        },
+      })),
+    });
+  }
+
+  // Object.keys(data) means eta arry hobe. data arra hobe
+  if (Object.keys(filtersData).length) {
+    andConditions.push({
+      $and: Object.entries(filtersData).map(([field, value]) => ({
+        [field]: value,
+      })),
+    });
+  }
+  const whereCondition =
+    andConditions.length > 0 ? { $and: andConditions } : {};
+
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelpers.calculatePagination(paginations);
+
+  const sortConditions: { [key: string]: SortOrder } = {};
+  if (sortBy && sortOrder) {
+    sortConditions[sortBy] = sortOrder;
+  }
+
+  const result = await AcademicSemester.find(whereCondition)
+    .sort(sortConditions)
+    .skip(skip)
+    .limit(limit);
+  const total = await AcademicSemester.countDocuments();
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+};
 export const AcademicSemesterService = {
   createSemester,
+  getAllsemester,
 };

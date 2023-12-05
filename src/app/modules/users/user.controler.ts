@@ -5,11 +5,12 @@ import sendResponse from '../../../shared/sendResponce';
 const getUserFromDb = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const users = await userService.getUser();
-    next();
+
     res.status(200).json({
       status: 'successfull',
       data: users,
     });
+    next();
   },
 );
 const createUserToDB = catchAsync(

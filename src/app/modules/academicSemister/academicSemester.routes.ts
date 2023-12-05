@@ -10,5 +10,6 @@ router.post(
   validateRequest(academicSemesterValidation.createAcademiSemesterZodSchema),
   academicSemesterController.createSemester,
 );
+router.get('/', academicSemesterController.getAllSemesters);
 
 export default router;
