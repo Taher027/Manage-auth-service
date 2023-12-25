@@ -1,27 +1,27 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
 /* eslint-disable no-unused-expressions */
-import { NextFunction } from 'connect';
-import { ErrorRequestHandler, Request, Response } from 'express';
-import { Error } from 'mongoose';
+import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import config from '../../config';
+import ApiError from '../../errors/ApiError';
+import handleValidationError from '../../errors/handleValidationError';
 
 import { ZodError } from 'zod';
-import { IGenericErrorMessage } from '../interface/error';
-import handleValidationError from '../../errors/handleValidationError';
-import handleZodError from '../../errors/handleZodError';
 import handleCastError from '../../errors/handleCastError';
-import ApiError from '../../errors/ApiError';
+import handleZodError from '../../errors/handleZodError';
 import { errorlogger } from '../../shared/logger';
+import { IGenericErrorMessage } from '../interface/error';
+
 const globalErrorHandler: ErrorRequestHandler = (
   error,
   req: Request,
   res: Response,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   next: NextFunction,
 ) => {
   config.env === 'development'
     ? console.log(`🐱‍🏍 globalErrorHandler ~~`, { error })
-    : errorlogger.error('globalErrorHandler', error);
+    : errorlogger.error(`🐱‍🏍 globalErrorHandler ~~`, error);
 
   let statusCode = 500;
   let message = 'Something went wrong !';
@@ -71,7 +71,6 @@ const globalErrorHandler: ErrorRequestHandler = (
     errorMessages,
     stack: config.env !== 'production' ? error?.stack : undefined,
   });
-  next();
 };
 
 export default globalErrorHandler;
